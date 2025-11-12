@@ -13,17 +13,17 @@
 
 ### (3)コンテナセキュリティ
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| コンテナユーザ権限 | Fargateコンテナユーザは書き込み不可権限 | [Fargate Security](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html) | コンテナの脆弱性対策強化 |
-| イメージスキャン | Inspector v2によるECRイメージ脆弱性スキャン | [Amazon Inspector](https://docs.aws.amazon.com/inspector/latest/user/what-is-inspector.html) | ECRイメージに対して脆弱性スキャンを実施 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| コンテナユーザ権限 | Fargateコンテナユーザは書き込み不可権限 | コンテナの脆弱性対策強化 |
+| イメージスキャン | Inspector v2によるECRイメージ脆弱性スキャン | ECRイメージに対して脆弱性スキャンを実施 |
 
 ### (4)WAF・DDoS対策
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| WAF | マネージドルール適用 | [AWS WAF](https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html) | SQLインジェクション、XSS、Bot攻撃対策 |
-| DDoS保護 | Shield Standard | [AWS Shield](https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html) | ネットワークおよびトランスポートレイヤーのDDoS攻撃防御 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| WAF | マネージドルール適用 | SQLインジェクション、XSS、Bot攻撃対策 |
+| DDoS保護 | Shield Standard | ネットワークおよびトランスポートレイヤーのDDoS攻撃防御 |
 
 ## 1.7.2 アカウント対策
 
@@ -46,7 +46,6 @@
   - rootユーザは、最高権限ユーザである為、アプリケーションでは利用しない。
   - パスワードはSecrets Managerで管理する。
 
-参考: [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)
 
 ### (2)パスワードポリシー
 
@@ -62,9 +61,9 @@
   上記のパスワードポリシーをAWS IAMのアカウント設定で制限する。
 
 - Cognito
-  | 項目名 | 内容 | AWS参考ドキュメント |
-  |--------|------|-------------------|
-  | パスワードポリシー | 強固 | [Cognito Password Policy](https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html) |
+  | 項目名 | 内容 |
+  |--------|------|
+  | パスワードポリシー | 強固 |
   
 - RDS(Aurora含む)
   上記のパスワードポリシーを運用ルールにて設定する。
@@ -77,16 +76,15 @@
   - AWS IAMポリシーにて、AWSマネジメントコンソールへのログイン後のアクションをIPアドレスにて制限する。
 
 - Cognito
-  | 項目名 | 内容 | AWS参考ドキュメント |
-  |--------|------|-------------------|
-  | 多要素認証（MFA） | 有効 | [Cognito MFA](https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-mfa.html) |
+  | 項目名 | 内容 |
+  |--------|------|
+  | 多要素認証（MFA） | 有効 |
 
 - RDS(Aurora含む)
   - ユーザ名/パスワードによる認証を行う。
   - パスワードはSecrets Managerで管理する。
   - hostの制限は行わず、セキュリティグループと併用する事で、接続元hostを制限する。
 
-参考: [AWS SSO](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)
 
 ## 1.7.3 ログ取得・監査
 
@@ -101,7 +99,6 @@ CloudTrail を使用すると、AWS インフラストラクチャ全体でア�
 |---|---|---|---|---|
 |全リージョンのCloudTrailログ|S3|1年|S3ライフサイクル|366日後に削除|
 
-参考: [AWS CloudTrail](https://docs.aws.amazon.com/cloudtrail/latest/userguide/cloudtrail-user-guide.html)
 
 ### (2)AWS Config
 
@@ -111,7 +108,6 @@ AWS Config は、AWS リソースの設定を評価、監査、審査できる�
 |---|---|---|---|---|
 |TokyoリージョンのConfigログ|S3|1年|AWS Configの標準機能|366日後に削除|
 
-参考: [AWS Config](https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html)
 
 ### (3)VPC Flow Logs
 
@@ -121,7 +117,6 @@ VPC フローログは、VPC のネットワークインターフェイスとの
 |---|---|---|---|---|
 |使用VPCのトラフィックログ|S3|1年|S3ライフサイクル|366日後に削除|
 
-参考: [VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html)
 
 ### (4)ALB アクセスログ
 
@@ -131,7 +126,6 @@ VPC フローログは、VPC のネットワークインターフェイスとの
 |---|---|---|---|---|
 |ALBのアクセスログ|S3|1年|S3ライフサイクル|366日後に削除|
 
-参考: [ALBアクセスログ](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html)
 
 ### (5)AWS Lambda 実行ログ
 
@@ -141,7 +135,6 @@ Lambda は関数で処理されたすべてのリクエストをログに記録�
 |---|---|---|---|---|
 |Lambda実行ログ|CloudWatch Logs|1年|CloudWatch Logsライフサイクル|366日後に削除|
 
-参考: [Lambda Logs](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-cloudwatchlogs.html)
 
 ### (6)ECS/Fargate コンテナログ
 
@@ -151,7 +144,6 @@ Fargate タスクで実行されるコンテナのログを CloudWatch Logs に�
 |---|---|---|---|---|
 |コンテナアプリケーションログ|CloudWatch Logs|1年|CloudWatch Logsライフサイクル|366日後に削除|
 
-参考: [ECS Logs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html)
 
 ### (7)RDS(Aurora) Instance 出力ログ
 
@@ -163,19 +155,18 @@ Aurora データベースの各種ログを CloudWatch Logs に出力する。
 |Auroraスロークエリログ|CloudWatch Logs|1年|CloudWatch Logsライフサイクル|366日後に削除|
 |Aurora監査ログ|CloudWatch Logs|1年|CloudWatch Logsライフサイクル|366日後に削除|
 
-参考: [Aurora Logs](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html)
 
 ## 1.7.4 データ対策
 
 ### (1)データ暗号化
 
-| 対象 | 暗号化方式 | AWS参考ドキュメント | 備考 |
-|------|-----------|-------------------|------|
-| Fargate エフェメラルストレージ | AWS管理キー | [Fargateストレージ](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-storage.html) | 一時データ暗号化 |
-| S3バケット | デフォルト暗号化（KMS） | [S3暗号化](https://docs.aws.amazon.com/s3/latest/userguide/UsingEncryption.html) | すべてのファイルを暗号化 |
-| Auroraデータ | AWS暗号化（KMS） | [Aurora暗号化](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Overview.Encryption.html) | データベース暗号化 |
-| ElastiCache | 保存時暗号化 | [ElastiCache暗号化](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/at-rest-encryption.html) | キャッシュデータ暗号化 |
-| Secrets Manager | KMS暗号化 | [Secrets Manager暗号化](https://docs.aws.amazon.com/secretsmanager/latest/userguide/security-encryption.html) | シークレット暗号化 |
+| 対象 | 暗号化方式 | 備考 |
+|------|-----------|------|
+| Fargate エフェメラルストレージ | AWS管理キー | 一時データ暗号化 |
+| S3バケット | デフォルト暗号化（KMS） | すべてのファイルを暗号化 |
+| Auroraデータ | AWS暗号化（KMS） | データベース暗号化 |
+| ElastiCache | 保存時暗号化 | キャッシュデータ暗号化 |
+| Secrets Manager | KMS暗号化 | シークレット暗号化 |
 
 ### (2)変更監視
 
@@ -188,7 +179,6 @@ Aurora データベースの各種ログを CloudWatch Logs に出力する。
 - 原則、インターネットを通過する通信は、HTTPS/TLSで暗号化する。
 - VPC内の通信に関しては、盗聴などのリスクが限りなく低いと判断し、コスト面の観点から暗号化通信を実施しない。
 
-参考: [TLS/SSL](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html)
 
 ### (2)Webサーバ証明書
 
@@ -199,13 +189,12 @@ Webサーバ証明書を利用し、CloudFront/ALBまでの通信を暗号化す
 |:-:|---|---|---|---|---|
 |1|*.dip-new-gate.com|Amazon Certificate Manager|1年|DNS認証による自動更新|本番|
 
-参考: [AWS Certificate Manager](https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html)
 
 ### (3)侵入検知・防御
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| 脅威検出 | GuardDuty | [Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html) | 悪意のあるアクティビティ検出 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| 脅威検出 | GuardDuty | 悪意のあるアクティビティ検出 |
 
 ### (4)ファイアウォールの導入
 
@@ -213,7 +202,6 @@ Webサーバ証明書を利用し、CloudFront/ALBまでの通信を暗号化す
 - VPC内のリソースは、AWS VPCのセキュリティグループにて通信制御を行う。
 - VPC外のリソースは、すべてAWS IAM認証による制限を行う。
 
-参考: [セキュリティグループ](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
 
 ### (5)DDoS対策の導入
 
@@ -221,38 +209,36 @@ Webサーバ証明書を利用し、CloudFront/ALBまでの通信を暗号化す
 - 本システムに採用する、AWS Shield Standardは、外部からの最も一般的なDDos攻撃に備える。
 - Standardでは攻撃の検知やレポートは不可となっている。
 
-参考: [AWS Shield](https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html)
 
 ## 1.7.6 パッチ管理
 
 ### 手動管理対象パッチ管理
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| 管理対象コンポーネント | コンテナイメージ、Auroraメンテナンス | [Patchingベストプラクティス](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/sec_vulnerability_management.html) | 手動適用が必要な対象 |
-| 脆弱性スキャン頻度 | ECRプッシュ時・週次（Inspector + EventBridge連携） | [Inspector v2](https://docs.aws.amazon.com/inspector/latest/user/scanning-ecr.html) | 継続的な監視体制 |
-| 脆弱性重要度分類 | Critical/High/Medium/Low | [CVSS評価基準](https://docs.aws.amazon.com/inspector/latest/user/findings-understanding-severity.html) | CVSSスコアに基づく分類 |
-| Critical脆弱性対応時間 | 4時間以内 | [Inspector脆弱性評価](https://docs.aws.amazon.com/inspector/latest/user/findings-understanding-severity.html) | CVSS 9.0-10.0の緊急対応 |
-| High脆弱性対応時間 | 24時間以内 | [Inspector脆弱性評価](https://docs.aws.amazon.com/inspector/latest/user/findings-understanding-severity.html) | CVSS 7.0-8.9の優先対応 |
-| Medium脆弱性対応時間 | 1週間以内 | [Inspector脆弱性評価](https://docs.aws.amazon.com/inspector/latest/user/findings-understanding-severity.html) | CVSS 4.0-6.9の定期対応 |
-| Low脆弱性対応時間 | 1ヶ月以内 | [Inspector脆弱性評価](https://docs.aws.amazon.com/inspector/latest/user/findings-understanding-severity.html) | CVSS 0.1-3.9の月次対応 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| 管理対象コンポーネント | コンテナイメージ、Auroraメンテナンス | 手動適用が必要な対象 |
+| 脆弱性スキャン頻度 | ECRプッシュ時・週次（Inspector + EventBridge連携） | 継続的な監視体制 |
+| 脆弱性重要度分類 | Critical/High/Medium/Low | CVSSスコアに基づく分類 |
+| Critical脆弱性対応時間 | 4時間以内 | CVSS 9.0-10.0の緊急対応 |
+| High脆弱性対応時間 | 24時間以内 | CVSS 7.0-8.9の優先対応 |
+| Medium脆弱性対応時間 | 1週間以内 | CVSS 4.0-6.9の定期対応 |
+| Low脆弱性対応時間 | 1ヶ月以内 | CVSS 0.1-3.9の月次対応 |
 
 ### Aurora MySQL パッチ管理
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| Aurora MySQL パッチ管理 | 手動管理 | [Aurora メンテナンス](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_UpgradeDBInstance.Maintenance.html) | セキュリティパッチは手動管理 |
-| マイナーアップデート自動適用 | 無効 | [Aurora 自動更新](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Updates.html) | 自動スケジューリング機能無効化 |
-| 定期メンテナンスウィンドウ | 第2日曜日 03:00-04:00 JST | [Aurora メンテナンスウィンドウ](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_UpgradeDBInstance.Maintenance.html) | 月次メンテナンス時間帯 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| Aurora MySQL パッチ管理 | 手動管理 | セキュリティパッチは手動管理 |
+| マイナーアップデート自動適用 | 無効 | 自動スケジューリング機能無効化 |
+| 定期メンテナンスウィンドウ | 第2日曜日 03:00-04:00 JST | 月次メンテナンス時間帯 |
 
 ### パッチ適用承認フロー
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| パッチ適用承認フロー | 緊急度別承認プロセス | [Step Functions承認](https://docs.aws.amazon.com/step-functions/latest/dg/sample-human-approval.html) | 人的確認を含むワークフロー対応 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| パッチ適用承認フロー | 緊急度別承認プロセス | 人的確認を含むワークフロー対応 |
 
 ## 1.7.7 脆弱性診断
 
 脆弱性診断はお客様にてご判断いただいた上で、お客様主体で実施頂く。
 
-参考: [AWS セキュリティベストプラクティス](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)

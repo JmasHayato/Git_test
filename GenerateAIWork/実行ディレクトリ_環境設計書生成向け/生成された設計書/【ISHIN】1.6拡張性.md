@@ -24,40 +24,40 @@
 
 ### APIサーバー（Fargate）
 
-| 拡張方式 | 内容 | AWS参考ドキュメント |
-|---------|------|-------------------|
-| 水平スケーリング | タスク数を3〜5台で自動スケーリング | [ECS Auto Scaling](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html) |
-| 垂直スケーリング | CPU/メモリのタスク定義変更（計画停止） | [Fargateタスクサイズ](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/capacity-tasksize.html) |
+| 拡張方式 | 内容 |
+|---------|------|
+| 水平スケーリング | タスク数を3〜5台で自動スケーリング |
+| 垂直スケーリング | CPU/メモリのタスク定義変更（計画停止） |
 
 ### データベース（Aurora）
 
-| 拡張方式 | 内容 | AWS参考ドキュメント |
-|---------|------|-------------------|
-| ライター拡張 | 垂直スケーリング（インスタンスサイズ変更、短時間ダウンタイム発生） | [Aurora拡張](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Performance.html) |
-| リーダー拡張 | 水平スケーリング（リードレプリカ追加、無停止拡張、最大15台まで） | [Aurora Auto Scaling](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Integrating.AutoScaling.html) |
-| ストレージ拡張 | 自動ストレージ拡張（10GiB〜128TiB自動拡張） | [Aurora Storage](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html) |
+| 拡張方式 | 内容 |
+|---------|------|
+| ライター拡張 | 垂直スケーリング（インスタンスサイズ変更、短時間ダウンタイム発生） |
+| リーダー拡張 | 水平スケーリング（リードレプリカ追加、無停止拡張、最大15台まで） |
+| ストレージ拡張 | 自動ストレージ拡張（10GiB〜128TiB自動拡張） |
 
 ### キャッシュ（ElastiCache）
 
-| 拡張方式 | 内容 | AWS参考ドキュメント |
-|---------|------|-------------------|
-| 垂直スケーリング | ノードタイプ変更（計画停止） | [ElastiCacheノードタイプ](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html) |
-| 水平スケーリング | レプリカノード追加 | [ElastiCache Redis複製](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Replication.html) |
+| 拡張方式 | 内容 |
+|---------|------|
+| 垂直スケーリング | ノードタイプ変更（計画停止） |
+| 水平スケーリング | レプリカノード追加 |
 
 ### バッチ（Lambda）
 
-| 拡張方式 | 内容 | AWS参考ドキュメント |
-|---------|------|-------------------|
-| 自動スケーリング | 同時実行数の自動拡張 | [Lambda同時実行](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html) |
-| メモリ増加 | Lambda設定変更 | [Lambda設定](https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html) |
+| 拡張方式 | 内容 |
+|---------|------|
+| 自動スケーリング | 同時実行数の自動拡張 |
+| メモリ増加 | Lambda設定変更 |
 
 ## 1.6.3 コスト最適化設定
 
 ### 環境運用方針
 
-| 項目名 | 内容 | AWS参考ドキュメント | 備考 |
-|--------|------|-------------------|------|
-| 設計方針 | 全環境設定をそろえる | [AWS Well-Architected](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html) | 環境統一方針 |
-| コスト削減方針 | 本番以外の環境は利用しない時間帯は停止 | [コスト最適化](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html) | 停止によるコスト削減 |
-| メンテナンス時コスト方針 | 長期メンテナンス時のリソース一時停止検討 | [ECSスケジュール起動停止](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html) | 計画メンテナンス時のコスト最適化 |
-| メンテナンス用リソース最小化 | メンテナンス管理機能は必要最小限のリソース構成 | [Lambda料金最適化](https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html) | メンテナンス管理機能のコスト効率化 |
+| 項目名 | 内容 | 備考 |
+|--------|------|------|
+| 設計方針 | 全環境設定をそろえる | 環境統一方針 |
+| コスト削減方針 | 本番以外の環境は利用しない時間帯は停止 | 停止によるコスト削減 |
+| メンテナンス時コスト方針 | 長期メンテナンス時のリソース一時停止検討 | 計画メンテナンス時のコスト最適化 |
+| メンテナンス用リソース最小化 | メンテナンス管理機能は必要最小限のリソース構成 | メンテナンス管理機能のコスト効率化 |

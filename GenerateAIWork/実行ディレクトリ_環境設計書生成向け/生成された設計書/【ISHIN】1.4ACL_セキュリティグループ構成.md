@@ -42,7 +42,6 @@ Subnet間の通信について、制御は行わない。
 
 ※ルールNoの数字が小さい順から評価され、いずれにも当てはまらなかった通信は"*"のルールが適用される。
 
-参考: [ネットワークACL](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html)
 
 ## 1.4.2 セキュリティグループ
 
@@ -56,7 +55,6 @@ Subnet間の通信について、制御は行わない。
 
 上記の要件により、以下の様なセキュリティグループ構成とする。
 
-参考: [セキュリティグループ](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
 
 ### (1)セキュリティグループ区分
 
@@ -72,25 +70,25 @@ Subnet間の通信について、制御は行わない。
 
 ### (2)セキュリティグループ設定
 
-|No.|名前|方向|タイプ|プロトコル|ポート範囲|送信元/送信先|AWS参考ドキュメント|
-|:-:|---|---|---|---|---|---|---|
-|1|Production ALB SecurityGroup|インバウンド  |HTTP|TCP|80|0.0.0.0/0|[ALBセキュリティグループ](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html)|
-| |                           |             |HTTPS|TCP|443|0.0.0.0/0|[ALBセキュリティグループ](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html)|
-| ||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
-|2|Production API Server SecurityGroup|インバウンド|HTTP|TCP|80|Production ALB SecurityGroup|[Fargate Security](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html)|
-| ||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
-|3|Production Batch Server SecurityGroup|インバウンド|-|-|-|-|[Lambda VPC](https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html)|
-|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
-|4|Production DB SecurityGroup|インバウンド|MYSQL/Aurora|TCP|3306|Production API Server SecurityGroup|[Aurora接続](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Connecting.html)|
-| |||MYSQL/Aurora|TCP|3306|Production Batch Server SecurityGroup|[Aurora接続](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Connecting.html)|
-|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
-|5|Production Cache SecurityGroup|インバウンド|Redis|TCP|6379|Production API Server SecurityGroup|[ElastiCache Redis](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/GettingStarted.ConnectToCacheNode.html)|
-| |||Redis|TCP|6379|Production Batch Server SecurityGroup|[ElastiCache Redis](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/GettingStarted.ConnectToCacheNode.html)|
-|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
-|6|Production Bastion Server SecurityGroup|インバウンド|SSH|TCP|22|管理者IP|[セキュリティグループルール](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-security-groups.html)|
-|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
-|7|Production VPC Endpoint SecurityGroup|インバウンド|HTTPS|TCP|443|Production API Server SecurityGroup|[VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html)|
-| |||HTTPS|TCP|443|Production Batch Server SecurityGroup|[VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html)|
-|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|-|
+|No.|名前|方向|タイプ|プロトコル|ポート範囲|送信元/送信先|
+|:-:|---|---|---|---|---|---|
+|1|Production ALB SecurityGroup|インバウンド  |HTTP|TCP|80|0.0.0.0/0|
+| |                           |             |HTTPS|TCP|443|0.0.0.0/0|
+| ||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
+|2|Production API Server SecurityGroup|インバウンド|HTTP|TCP|80|Production ALB SecurityGroup|
+| ||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
+|3|Production Batch Server SecurityGroup|インバウンド|-|-|-|-|
+|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
+|4|Production DB SecurityGroup|インバウンド|MYSQL/Aurora|TCP|3306|Production API Server SecurityGroup|
+| |||MYSQL/Aurora|TCP|3306|Production Batch Server SecurityGroup|
+|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
+|5|Production Cache SecurityGroup|インバウンド|Redis|TCP|6379|Production API Server SecurityGroup|
+| |||Redis|TCP|6379|Production Batch Server SecurityGroup|
+|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
+|6|Production Bastion Server SecurityGroup|インバウンド|SSH|TCP|22|管理者IP|
+|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
+|7|Production VPC Endpoint SecurityGroup|インバウンド|HTTPS|TCP|443|Production API Server SecurityGroup|
+| |||HTTPS|TCP|443|Production Batch Server SecurityGroup|
+|||アウトバウンド|すべてのトラフィック|すべて|すべて|0.0.0.0/0|
 
 ※セキュリティグループは許可設定のみが設定可能。ルールに当てはまらない通信はすべて拒否される。
