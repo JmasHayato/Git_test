@@ -112,6 +112,8 @@ VPC構成:
 
 このプロジェクトでは、インフラ文書作成プロセス全体で生成AIを活用しています：
 
+**詳細調査**: Amazon Q と GitHub の連携に関する包括的な調査については、[Amazon Q と GitHub 連携調査報告書](../../../docs/amazon-q-github-integration-investigation.md)および[実装例](../../../docs/amazon-q-github-integration-examples.md)を参照してください。
+
 ### AIツール使用法
 - **プライマリ**: VSCode + Amazon Q Developer
 - **セカンダリ**: コード生成用GitHub Copilot
