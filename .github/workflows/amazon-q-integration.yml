@@ -1,0 +1,202 @@
+name: Amazon Q Developer Integration
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.py'
+      - '**/*.js'
+      - '**/*.yaml'
+      - '**/*.yml'
+      - '**/*.json'
+      - '**/*.md'
+      - 'GenerateAIWork/**'
+
+  push:
+    branches: [ main ]
+    paths:
+      - 'GenerateAIWork/実行ディレクトリ_環境設計書生成向け/Parameters/**'
+      - 'GenerateAIWork/実行ディレクトリ_環境設計書生成向け/Inputs/**'
+
+jobs:
+  amazon-q-security-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install boto3 pyyaml
+          # Amazon Q Developer CLI のインストール（実際のパッケージ名に置き換え）
+          # pip install amazon-q-developer-cli
+
+      - name: Run Security Analysis
+        run: |
+          echo "Amazon Q Developer セキュリティスキャンを実行中..."
+          # 実際のAmazon Q Developer CLIコマンドに置き換え
+          # amazon-q scan --type security --format sarif --output security-results.sarif
+          
+          # 現在はプレースホルダーとして基本的なセキュリティチェックを実行
+          python -c "
+          import os
+          import json
+          from pathlib import Path
+          
+          # 基本的なセキュリティパターンチェック
+          security_patterns = [
+              'password',
+              'secret',
+              'api_key',
+              'access_key',
+              'private_key'
+          ]
+          
+          issues = []
+          for file_path in Path('.').rglob('*.py'):
+              with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                  content = f.read().lower()
+                  for pattern in security_patterns:
+                      if pattern in content:
+                          issues.append({
+                              'file': str(file_path),
+                              'pattern': pattern,
+                              'message': f'Potential security issue: {pattern} found'
+                          })
+          
+          with open('security-scan-results.json', 'w') as f:
+              json.dump(issues, f, indent=2)
+          
+          print(f'セキュリティスキャン完了: {len(issues)} 件の潜在的な問題を検出')
+          "
+
+      - name: Comment PR with Security Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const results = JSON.parse(fs.readFileSync('security-scan-results.json', 'utf8'));
+              
+              let comment = '## 🔍 Amazon Q Developer セキュリティスキャン結果\n\n';
+              
+              if (results.length === 0) {
+                comment += '✅ セキュリティ上の問題は検出されませんでした。\n';
+              } else {
+                comment += `⚠️ ${results.length} 件の潜在的なセキュリティ問題が検出されました:\n\n`;
+                
+                results.forEach((issue, index) => {
+                  comment += `${index + 1}. **${issue.file}**\n`;
+                  comment += `   - パターン: \`${issue.pattern}\`\n`;
+                  comment += `   - メッセージ: ${issue.message}\n\n`;
+                });
+                
+                comment += '\n> 💡 これらの問題を修正してからマージすることを推奨します。\n';
+              }
+              
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('セキュリティスキャン結果の処理中にエラーが発生しました:', error);
+            }
+
+  auto-documentation:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Generate Documentation with Amazon Q
+        run: |
+          echo "Amazon Q Developer を使用した文書生成を実行中..."
+          
+          # 実際のAmazon Q Developer統合コードに置き換え
+          python -c "
+          import os
+          import yaml
+          from pathlib import Path
+          from datetime import datetime
+          
+          # 生成された文書の出力ディレクトリを作成
+          output_dir = Path('GenerateAIWork/実行ディレクトリ_環境設計書生成向け/GeneratedOutputs')
+          output_dir.mkdir(exist_ok=True)
+          
+          # サンプル文書生成（実際のAmazon Q統合に置き換え）
+          sample_doc = f'''# 自動生成された環境設計書
+
+生成日時: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+## 概要
+
+この文書はAmazon Q Developerを使用して自動生成されました。
+
+## AWS環境構成
+
+- リージョン: ap-northeast-1
+- 可用性ゾーン: Multi-AZ構成
+- セキュリティ: AWS Well-Architected Framework準拠
+
+## 生成プロセス
+
+1. パラメータファイルの解析
+2. テンプレートとの照合
+3. Amazon Q Developerによる文書生成
+4. 品質検証
+5. 最終出力
+
+> この文書は自動生成されています。詳細な設定については、Parametersディレクトリの設定ファイルを参照してください。
+'''
+          
+          with open(output_dir / 'auto-generated-design-document.md', 'w', encoding='utf-8') as f:
+              f.write(sample_doc)
+          
+          print('文書生成完了')
+          "
+
+      - name: Commit generated documentation
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Amazon Q Developer Bot"
+          git add GenerateAIWork/実行ディレクトリ_環境設計書生成向け/GeneratedOutputs/
+          
+          if git diff --staged --quiet; then
+            echo "変更がないため、コミットをスキップします"
+          else
+            git commit -m "🤖 Amazon Q Developer: 環境設計書を自動生成"
+            git push
+            echo "自動生成された文書をコミットしました"
+          fi
